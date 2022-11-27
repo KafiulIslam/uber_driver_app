@@ -1,7 +1,7 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:uber_driver_app/view/main_screen/main_screen.dart';
-
+import 'package:uber_driver_app/view/auth/create_driver_account.dart';
+import 'package:uber_driver_app/view/auth/login_screen.dart';
 import 'controller/constant/color.dart';
 
 
@@ -18,7 +18,7 @@ void main() async {
         duration: 1000,
         splashIconSize: 180,
         splash: 'assets/images/uber_logo.png',
-        nextScreen: const MainScreen(),
+        nextScreen: const LoginScreen(),
         splashTransition: SplashTransition.scaleTransition,
         backgroundColor: primaryColor),
   )));

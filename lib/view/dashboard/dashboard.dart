@@ -5,14 +5,14 @@ import 'package:uber_driver_app/view/tabPages/home_screen.dart';
 import 'package:uber_driver_app/view/tabPages/profile_screen.dart';
 import 'package:uber_driver_app/view/tabPages/ratings_screen.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+class Dashboard extends StatefulWidget {
+  const Dashboard({Key? key}) : super(key: key);
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin{
+class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMixin{
   TabController? _tabController;
   int selectedIndex = 0;
 

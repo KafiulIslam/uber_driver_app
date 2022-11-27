@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
+import 'package:uber_driver_app/view/dashboard/dashboard.dart';
 import '../../controller/constant/color.dart';
-import '../main_screen/main_screen.dart';
+
 
 
 
@@ -40,7 +40,7 @@ class _CustomSplashState extends State<CustomSplash> with TickerProviderStateMix
   }
   void startTimer(BuildContext context){
     Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (_)=> const MainScreen()));
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (_)=> const Dashboard()));
     });
   }
 
