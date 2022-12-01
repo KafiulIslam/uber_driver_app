@@ -1,12 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:uber_driver_app/controller/common/body/single_scroll_column.dart';
 import 'package:uber_driver_app/controller/common/button/back_to_login_button.dart';
 import 'package:uber_driver_app/controller/constant/constant.dart';
 import 'package:uber_driver_app/view/auth/car_info.dart';
-import 'package:uber_driver_app/view/auth/login_screen.dart';
-import 'package:uber_driver_app/view/dashboard/dashboard.dart';
 import '../../controller/common/button/primary_button.dart';
 import '../../controller/common/input_field/common_input_field.dart';
 import '../../controller/common/input_field/email_input_field.dart';
@@ -32,6 +34,44 @@ class _CreateDriverAccountState extends State<CreateDriverAccount> {
   PhoneNumber number = PhoneNumber(isoCode: 'BD');
   late String phoneNumber = '';
 
+  saveDriverInfoNow() async {
+   try{
+     if (_formKey.currentState?.saveAndValidate() ?? false) {
+       if (!_isLoading) {
+         setState(() {
+           _isLoading = true;
+         });
+         final User? firebaseUser = (
+             await fAuth.createUserWithEmailAndPassword(
+                 email: _formKey.currentState?.value['email'],
+                 password: _formKey.currentState?.value['password'])
+         ).user;
+         if(firebaseUser != null){
+           Map driverInfoMap = {
+             'id' : firebaseUser.uid,
+             'name' : _formKey.currentState?.value['name'],
+             'email' : _formKey.currentState?.value['email'],
+             'password' : _formKey.currentState?.value['password'],
+           };
+           DatabaseReference driverRef = FirebaseDatabase.instance.ref().child("drivers");
+           driverRef.child(firebaseUser.uid).set(driverInfoMap);
+           currentFirebaseUser = firebaseUser;
+           CustomSnack.successSnack('Account has been created successfully');
+           Get.to(()=> const CarInfo());
+       }}
+     }else{
+       Get.back();
+       CustomSnack.warningSnack('Account creation is failed');
+     }
+   }catch(e){
+     CustomSnack.warningSnack(e.toString());
+   }finally{
+     setState(() {
+       _isLoading = false;
+     });
+   }
+  }
+
 
   @override
   void initState() {
@@ -43,7 +83,7 @@ class _CreateDriverAccountState extends State<CreateDriverAccount> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: white,
-       // appBar: const CustomAppBar(title: 'Register Account',),
+        // appBar: const CustomAppBar(title: 'Register Account',),
         body: FormBuilder(
           key: _formKey,
           enabled: !_isLoading,
@@ -54,78 +94,39 @@ class _CreateDriverAccountState extends State<CreateDriverAccount> {
           child: SingleScrollColumn(
 
               children: [
-                  Image.asset('assets/images/car.jpg',height: 150,width: 280,),
-                  const CommonTextField(
-                    name: 'name',
-                    title: 'Name',
-                    hintText: 'Ex.Jhonny',
-                    prefixIcon: Icons.person,
-                  ),
-                  primarySpacerVertical,
-                  const EmailTextField(
-              name: 'email',
-              title: 'Email',
-              hintText: 'batchlearn@gmail.com',
-              prefixIcon: Icons.email,
-            ),
-                  primarySpacerVertical,
-                  const PasswordInputField(
-                    name: 'password',
-                    title: 'Password',
-                    hintText: 'Password',
-                  ),
-                  primarySpacerVertical,
-                  _buildPhoneNumberInputField(context),
-                  primarySpacerVertical,
-                  PrimaryButton(
-                buttonTitle: 'Create Account',
-                onTap: () async {
-                  try{
-                    // if (_formKey.currentState?.saveAndValidate() ?? false) {
-                    //   if (!_isLoading) {
-                    //     setState(() {
-                    //       _isLoading = true;
-                    //     });
-                    //     // Send request to server
-                    //     var response = await createStudentAccount(
-                    //         _formKey.currentState?.value['email'],
-                    //         _formKey.currentState?.value['first_name'],
-                    //         _formKey.currentState?.value['last_name'],
-                    //         phoneNumber,
-                    //         _formKey.currentState?.value['school'],
-                    //         _formKey.currentState?.value['password'],
-                    //         _couponController.text
-                    //     );
-                    //     var data = response['data'];
-                    //     if (response['status'] == 'success') {
-                    //       CustomSnack.successSnack('Account creation is Successful');
-                    //       Get.off(()=> const DashBoard());
-                    //     } else {
-                    //       if (data.containsKey('non_field_errors')) {
-                    //         CustomSnack.warningSnack('${data['non_field_errors'][0]}');
-                    //       } else {
-                    //         data.forEach((k, v) {
-                    //           _formKey.currentState
-                    //               ?.invalidateField(name: k, errorText: data[k][0]);
-                    //         });
-                    //       }
-                    //     }
-                    //   }
-                    // }
-                    Navigator.push(context,MaterialPageRoute(builder: (_) => const CarInfo()));
-                  }catch(e){
-                    CustomSnack.warningSnack(context,'$e');
-                  }finally{
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  }
-                },
-                buttonColor: primaryColor,
-                isLoading: _isLoading,
-              ),
-                  const BackToLoginButton(),
-          ]),
+                Image.asset('assets/images/car.jpg', height: 150, width: 280,),
+                const CommonTextField(
+                  name: 'name',
+                  title: 'Name',
+                  hintText: 'Ex.Jhonny',
+                  prefixIcon: Icons.person,
+                ),
+                primarySpacerVertical,
+                const EmailTextField(
+                  name: 'email',
+                  title: 'Email',
+                  hintText: 'batchlearn@gmail.com',
+                  prefixIcon: Icons.email,
+                ),
+                primarySpacerVertical,
+                const PasswordInputField(
+                  name: 'password',
+                  title: 'Password',
+                  hintText: 'Password',
+                ),
+                primarySpacerVertical,
+                _buildPhoneNumberInputField(context),
+                primarySpacerVertical,
+                PrimaryButton(
+                  buttonTitle: 'Create Account',
+                  onTap: () async {
+                    await saveDriverInfoNow();
+                  },
+                  buttonColor: primaryColor,
+                  isLoading: _isLoading,
+                ),
+                const BackToLoginButton(),
+              ]),
         ),
       ),
     );
@@ -135,7 +136,7 @@ class _CreateDriverAccountState extends State<CreateDriverAccount> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Phone Number:',style: sixteenBlackStyle),
+        const Text('Phone Number:', style: sixteenBlackStyle),
         const SizedBox(height: 10,),
         InternationalPhoneNumberInput(
           inputDecoration: InputDecoration(

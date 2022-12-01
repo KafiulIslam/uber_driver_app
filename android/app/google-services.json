@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "125056235199",
+    "project_id": "uber-driver-d9088",
+    "storage_bucket": "uber-driver-d9088.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125056235199:android:00cf58da2d4017642b380a",
+        "android_client_info": {
+          "package_name": "com.example.uber_driver_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "125056235199-k21gpbmfu18fio7dhb15gnqav6dkiund.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAypx0A3dlGS4az42zvNnzxCQNCyeFIW9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "125056235199-k21gpbmfu18fio7dhb15gnqav6dkiund.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

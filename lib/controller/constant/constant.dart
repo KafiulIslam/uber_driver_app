@@ -1,5 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'color.dart';
 
 
@@ -20,3 +20,6 @@ final outline = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
   borderSide: const BorderSide(color: deepAss),
 );
+
+final FirebaseAuth fAuth = FirebaseAuth.instance;
+  User? currentFirebaseUser;

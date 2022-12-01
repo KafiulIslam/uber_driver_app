@@ -36,8 +36,8 @@ class PrimaryButton extends StatelessWidget {
                   )
               )
           ),
-          child: isLoading == true ? const CircularProgressIndicator(
-            color: primaryDeepColor,
+          child: isLoading == true ? CircularProgressIndicator(
+            color: Colors.white.withOpacity(0.3),
           ) :
           Text(
             buttonTitle,

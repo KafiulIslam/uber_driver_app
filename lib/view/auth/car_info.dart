@@ -1,5 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:uber_driver_app/controller/common/body/single_scroll_column.dart';
 import 'package:uber_driver_app/controller/common/button/back_to_login_button.dart';
@@ -10,6 +13,7 @@ import '../../controller/common/input_field/common_input_field.dart';
 import '../../controller/common/input_field/dropdown_input_field.dart';
 import '../../controller/common/util/custom_snack.dart';
 import '../../controller/constant/color.dart';
+import 'login_screen.dart';
 
 class CarInfo extends StatefulWidget {
   const CarInfo({Key? key}) : super(key: key);
@@ -47,6 +51,38 @@ class _CarInfoState extends State<CarInfo> {
       child: Text('Toyota'),
     ),
   ];
+
+  saveCarInfo() async {
+    try {
+      if (_formKey.currentState?.saveAndValidate() ?? false) {
+        if (!_isLoading) {
+          setState(() {
+            _isLoading = true;
+          });
+          Map driverCarInfoMap = {
+            'car_model': _formKey.currentState?.value['car_model'],
+            'car_number': _formKey.currentState?.value['car_number'],
+            'car_color': _formKey.currentState?.value['car_color'],
+            'car_type': _formKey.currentState?.value['car_type'],
+          };
+          DatabaseReference driverRef =
+              FirebaseDatabase.instance.ref().child("drivers");
+          driverRef
+              .child(currentFirebaseUser!.uid)
+              .child("car_details")
+              .set(driverCarInfoMap);
+          CustomSnack.successSnack('Car information has been saved successfully');
+          Get.to(()=> const LoginScreen());
+        }
+      }
+    } catch (e) {
+      CustomSnack.warningSnack(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -104,47 +140,7 @@ class _CarInfoState extends State<CarInfo> {
             PrimaryButton(
               buttonTitle: 'Submit',
               onTap: () async {
-                try {
-                  // if (_formKey.currentState?.saveAndValidate() ?? false) {
-                  //   if (!_isLoading) {
-                  //     setState(() {
-                  //       _isLoading = true;
-                  //     });
-                  //     // Send request to server
-                  //     var response = await createStudentAccount(
-                  //         _formKey.currentState?.value['email'],
-                  //         _formKey.currentState?.value['first_name'],
-                  //         _formKey.currentState?.value['last_name'],
-                  //         phoneNumber,
-                  //         _formKey.currentState?.value['school'],
-                  //         _formKey.currentState?.value['password'],
-                  //         _couponController.text
-                  //     );
-                  //     var data = response['data'];
-                  //     if (response['status'] == 'success') {
-                  //       CustomSnack.successSnack('Account creation is Successful');
-                  //       Get.off(()=> const DashBoard());
-                  //     } else {
-                  //       if (data.containsKey('non_field_errors')) {
-                  //         CustomSnack.warningSnack('${data['non_field_errors'][0]}');
-                  //       } else {
-                  //         data.forEach((k, v) {
-                  //           _formKey.currentState
-                  //               ?.invalidateField(name: k, errorText: data[k][0]);
-                  //         });
-                  //       }
-                  //     }
-                  //   }
-                  // }
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const Dashboard()));
-                } catch (e) {
-                  CustomSnack.warningSnack(context, '$e');
-                } finally {
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }
+               await saveCarInfo();
               },
               buttonColor: primaryColor,
               isLoading: _isLoading,
